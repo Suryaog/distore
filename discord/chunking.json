@@ -1,0 +1,38 @@
+const crypto = require('crypto');
+const fs = require('fs');
+
+const ALGORITHM = 'aes-256-ctr';
+const CHUNK_SIZE = 5 * 1024 * 1024; 
+
+function encryptBuffer(buffer, key) {
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(key), iv);
+    const encrypted = Buffer.concat([cipher.update(buffer), cipher.final()]);
+    return { iv: iv.toString('hex'), data: encrypted };
+}
+
+function decryptBuffer(buffer, key, ivHex) {
+    const iv = Buffer.from(ivHex, 'hex');
+    const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(key), iv);
+    const decrypted = Buffer.concat([decipher.update(buffer), decipher.final()]);
+    return decrypted;
+}
+
+async function splitAndEncrypt(filePath, key) {
+    const stats = fs.statSync(filePath);
+    const totalChunks = Math.ceil(stats.size / CHUNK_SIZE);
+    const chunks = [];
+    const fd = fs.openSync(filePath, 'r');
+
+    for (let i = 0; i < totalChunks; i++) {
+        const buffer = Buffer.alloc(Math.min(CHUNK_SIZE, stats.size - i * CHUNK_SIZE));
+        fs.readSync(fd, buffer, 0, buffer.length, i * CHUNK_SIZE);
+        const encrypted = encryptBuffer(buffer, key);
+        chunks.push(encrypted);
+    }
+    
+    fs.closeSync(fd);
+    return chunks;
+}
+
+module.exports = { encryptBuffer, decryptBuffer, splitAndEncrypt };

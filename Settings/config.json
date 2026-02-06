@@ -1,0 +1,7 @@
+{
+  "token": "YOUR_DISCORD_BOT_TOKEN",
+  "guildId": "YOUR_GUILD_ID",
+  "channelId": "YOUR_CHANNEL_ID",
+  "encryptionKey": "12345678901234567890123456789012",
+  "port": 3000
+}

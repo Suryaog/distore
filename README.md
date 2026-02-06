@@ -47,5 +47,12 @@ Here is how the magic happens under the hood:
 ### 2. Clone & Install
 Download the source code and install the dependencies:
 ```bash
-# Install dependencies
-npm install
+npm install```
+### 3. Discord Bot Setup
+Go to the Discord Developer Portal.
+Create a New Application -> Bot.
+Enable Message Content Intent in the Bot settings.
+Copy your Bot Token.
+Invite the bot to your server using OAuth2 (Scopes: bot, Permissions: Send Messages, Read Messages, Attach Files).
+### 4. Configuration
+Open settings/config.json and configure your credentials:
